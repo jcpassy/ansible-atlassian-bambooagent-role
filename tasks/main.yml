@@ -6,6 +6,11 @@
   tags:
     - checks
 
+- name: Install certificate
+  ansible.builtin.import_tasks: install_certificate.yml
+  tags:
+    - certificates
+
 - name: Configure user Ubuntu/macOS
   when: ansible_distribution != "Windows"
   ansible.builtin.import_tasks: create_user_ubuntu.yml
@@ -18,17 +23,10 @@
   tags:
     - create_user
 
-
 - name: Exiting
   ansible.builtin.assert:
     that:
       - false
-
-- name: Install certificate
-  when: certificate_files|default()
-  ansible.builtin.import_tasks: install_certificate.yml
-  tags:
-    - certificates
 
 - name: Install starter
   ansible.builtin.import_tasks: install_starter.yml
