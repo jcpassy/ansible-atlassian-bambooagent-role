@@ -11,24 +11,18 @@
     split: ':'
     fail_key: false
 
-- name: Set variable for user existence
-  ansible.builtin.set_fact:
-    no_user: "{{ getent_passwd[bambooagent_user] == None }}"
-
-- name: Ensure existence of user's home
-  when: not no_user
-  ansible.builtin.file:
-    path: "{{ getent_passwd[bambooagent_user][4] }}"
-    state: directory
-    owner: "{{ bambooagent_user }}"
-    mode: "0755"
-
 - name: Creating non-existing user
-  when:
-    - no_user
   ansible.builtin.user:
     name: "{{ bambooagent_user }}"
     comment: "Bamboo agent"
     state: present
     createhome: true
     system: true
+  register: user
+
+- name: Fix home permissions
+  ansible.builtin.file:
+    path: "{{ user.home }}"
+    state: directory
+    owner: "{{ bambooagent_user }}"
+    mode: "0755"

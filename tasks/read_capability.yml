@@ -1,25 +1,22 @@
 
-- name: '[BAMBOO] Check capability file variable'
-  fail:
-    msg: "Variable 'bambooagent_capability_file' is not defined"
-  when: bambooagent_capability_file is undefined
-
-- name: '[BAMBOO] read remote capability file'
+---
+# Reads the capability file
+- name: Read remote capability file
+  when: ansible_distribution != "Windows"
   block:
-
-    - name: '[BAMBOO] check remote capability file exists'
-      stat:
+    - name: Check remote capability file exists
+      ansible.builtin.stat:
         path: "{{ bambooagent_capability_file }}"
       register: stat_capability_exist
 
-    - name: '[BAMBOO] read remote capability file content'
-      slurp:
+    - name: Read remote capability file content
+      ansible.builtin.slurp:
         src: "{{ bambooagent_capability_file }}"
       when: stat_capability_exist.stat.exists
       register: capability_content_remote
 
-    - name: '[BAMBOO] process remote capability file content'
-      set_fact:
+    - name: Process remote capability file content
+      ansible.builtin.set_fact:
         bamboo_capabilities: |
            {{ (bamboo_capabilities | default({})) |
               combine({item.split('=')[0].strip(): item.split('=')[1].strip()}) }}
@@ -28,9 +25,6 @@
         - stat_capability_exist.stat.exists
         - item.strip()
         - item.split('=')[0].strip()
-
-  when:
-    - ansible_os_family != "Windows"
 
 - name: '[BAMBOO] read remote capability file'
   block:

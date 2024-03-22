@@ -1,77 +1,43 @@
-- name: '[BAMBOO] Check capability file variable'
-  fail:
-    msg: "Variable 'bambooagent_capability_file' is not defined"
-  when: bambooagent_capability_file is undefined
-
-- name: '[BAMBOO] Summarize all capabilities'
-  debug:
-    msg: "[CAP] '{{ item.key.strip() | replace('\\n', '') | replace('\\r', '') }}' => '{{ item.value.strip() | replace('\\n', '') | replace('\\r', '') }}'"
-  loop: "{{ bamboo_capabilities | dict2items }}"
-  tags:
-  - capability
+---
+# Writes/updates the capability file
 
 # non windows
 
-- name: '[BAMBOO] Check if the agent file exists'
-  stat:
-    path: "{{ bambooagent_capability_file }}"
-  when:
-    - ansible_os_family != "Windows"
-  register: stat_result
-
-- name: Create root directory if file does not exist
-  file:
+- name: Create root directory
+  ansible.builtin.file:
     path: "{{ bambooagent_capability_file | dirname }}"
     state: directory
-    recurse: yes
+    recurse: true
     owner: "{{ bambooagent_user }}"
     group: "{{ bambooagent_group }}"
-    mode: "u+rwx,g+rx,o+rx"
-  when:
-    - ansible_os_family != "Windows"
-    - not stat_result.stat.exists
+    mode: "0755"
 
-- name: Create the agent file, if it doesnt exist already
-  file:
+- name: Create capability
+  ansible.builtin.file:
     path: "{{ bambooagent_capability_file }}"
     state: touch
-    mode: "u+r,g+r,o+r"
-  when:
-    - ansible_os_family != "Windows"
-    - not stat_result.stat.exists
+    mode: "0444"
 
-- name: '[BAMBOO] Flush the capabilities into the agents file'
-  lineinfile:
+- name: Flush capabilities into file (new created, existing updated)
+  ansible.builtin.lineinfile:
     dest: "{{ bambooagent_capability_file }}"
     state: present
     regexp: "^{{ item.key.strip() | replace('\\n', '') | replace('\\r', '') }}="
     line: "{{ item.key.strip() | replace('\\n', '') | replace('\\r', '') }}={{ item.value.strip() | replace('\\n', '') | replace('\\r', '') }}"
   loop: "{{ bamboo_capabilities | dict2items }}"
-  tags:
-  - capability:write
-  when:
-    - ansible_os_family != "Windows"
 
-- name: '[BAMBOO] Remove empty lines from the capability file'
-  lineinfile:
+- name: Remove empty lines from the capability file
+  ansible.builtin.lineinfile:
     dest: "{{ bambooagent_capability_file }}"
     state: absent
     regexp: "^\\s*$"
-  tags:
-  - capability:write
-  when:
-    - ansible_os_family != "Windows"
 
-- name: '[BAMBOO] Remove capabilities from agents'
-  lineinfile:
+- name: Remove capabilities from agents
+  ansible.builtin.lineinfile:
     dest: "{{ bambooagent_capability_file }}"
     state: absent
     regexp: "^{{ item.strip() | replace('\\n', '') | replace('\\r', '') }}="
-  loop: "{{ bamboo_capabilities_to_remove | default([])  }}"
-  tags:
-  - capability:write
-  when:
-    - ansible_os_family != "Windows"
+  loop: "{{ bamboo_capabilities_to_remove | default([]) }}"
 
 # windows
 

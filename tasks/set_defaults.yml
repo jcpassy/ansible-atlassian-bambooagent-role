@@ -1,0 +1,19 @@
+---
+# Set defaults
+
+- name: Read agent capability file
+  ansible.builtin.include_tasks: read_capability.yml
+
+- name: Declare default capabilities
+  ansible.builtin.set_fact:
+    bamboo_capabilities: "{{ (bamboo_capabilities | default({})) | combine({item.key: item.value}) }}"
+  loop:
+    - key: 'operating_system'
+      value: "{{ bamboo_operating_system_capability }}"
+    - key: agent_name
+      value: "{{ ansible_hostname }}"
+    - key: osversion
+      value: "{{ ansible_distribution_version.split('.')[:2] | join('.') }}"
+
+- name: Update agent capability file
+  ansible.builtin.include_tasks: write_capability.yml

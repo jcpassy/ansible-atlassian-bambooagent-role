@@ -6,8 +6,8 @@
   tags:
     - checks
 
-- name: Install certificate
-  ansible.builtin.import_tasks: install_certificate.yml
+- name: Install certificates
+  ansible.builtin.import_tasks: install_certificates.yml
   tags:
     - certificates
 
@@ -23,17 +23,23 @@
   tags:
     - create_user
 
+- name: Set defaults
+  ansible.builtin.import_tasks: set_defaults.yml
+  tags:
+    - capability
+
+
+# - name: Install starter
+#   ansible.builtin.import_tasks: install_starter.yml
+#   tags:
+#     - starter
+
 - name: Exiting
   ansible.builtin.assert:
     that:
       - false
 
-- name: Install starter
-  ansible.builtin.import_tasks: install_starter.yml
-  tags:
-    - starter
-
-- name: Configure capabilities
-  ansible.builtin.import_tasks: configure_capabilities.yml
-  tags:
-    - capabilities
+# - name: Configure capabilities
+#   ansible.builtin.import_tasks: configure_capabilities.yml
+#   tags:
+#     - capabilities
