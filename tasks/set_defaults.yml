@@ -11,7 +11,7 @@
     - key: 'operating_system'
       value: "{{ bamboo_operating_system_capability }}"
     - key: agent_name
-      value: "{{ ansible_hostname }}"
+      value: "{{ ansible_fqdn }}"
     - key: osversion
       value: "{{ ansible_distribution_version.split('.')[:2] | join('.') }}"
 
