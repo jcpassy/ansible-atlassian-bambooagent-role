@@ -3,25 +3,22 @@
   register: output
   changed_when: output.rc != 0
 
-- name: Register bambooagent service
+- name: Register service
   ansible.builtin.service:
     name: "{{ bambooagent_service_name }}"
     state: reloaded
     enabled: true
 
-- name: Restart bambooagent linux/macOS
+- name: Restart service
   ansible.builtin.service:
     name: "{{ bambooagent_service_name }}"
     state: restarted
     enabled: true
-  listen: "Restart bambooagent"
-  when:
-    - ansible_distribution != "Windows"
 
-- name: Restart bambooagent windows
-  ansible.windows.win_service:
-    name: "{{ bambooagent_service_name }}"
-    state: restarted
-  listen: "Restart bambooagent"
-  when:
-    - ansible_os_family == "Windows"
+# - name: Restart bambooagent windows
+#   ansible.windows.win_service:
+#     name: "{{ bambooagent_service_name }}"
+#     state: restarted
+#   listen: "Restart bambooagent"
+#   when:
+#     - ansible_os_family == "Windows"

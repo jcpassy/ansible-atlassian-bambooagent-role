@@ -13,7 +13,7 @@
 
 - name: Configure user Ubuntu/macOS
   when: ansible_distribution != "Windows"
-  ansible.builtin.import_tasks: create_user_ubuntu.yml
+  ansible.builtin.import_tasks: create_user.yml
   tags:
     - create_user
 
@@ -28,16 +28,16 @@
   tags:
     - capability
 
+- name: Install starter Ubuntu/macOS
+  when: ansible_distribution != "Windows"
+  ansible.builtin.import_tasks: install_starter.yml
+  tags:
+    - starter
 
-# - name: Install starter
-#   ansible.builtin.import_tasks: install_starter.yml
-#   tags:
-#     - starter
-
-- name: Exiting
-  ansible.builtin.assert:
-    that:
-      - false
+# - name: Exiting
+#   ansible.builtin.assert:
+#     that:
+#       - false
 
 # - name: Configure capabilities
 #   ansible.builtin.import_tasks: configure_capabilities.yml

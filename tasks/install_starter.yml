@@ -1,18 +1,42 @@
-# Installs the startup procedure for the bambooagent
+---
+# Installs the service
 
-#
-# ensures the destination folder exists
+- name: Create the installation folder
+  ansible.builtin.file:
+    path: "{{ bambooagent_install_root }}"
+    state: directory
+    owner: "{{ bambooagent_user }}"
+    group: "{{ bambooagent_group }}"
+    mode: "0755"
 
-- include_tasks: bambooagent_install_starter_jarfile.yml
+- name: Copy bamboo jar into destination from existing file
+  ansible.builtin.copy:
+    src: "{{ bamboo_java_jar_file }}"
+    dest: "{{ bambooagent_jar_filename_full_path }}"
+    owner: "{{ bambooagent_user }}"
+    group: "{{ bambooagent_group }}"
+    mode: "0744"
 
-- name: "[BAMBOO] Ubuntu installation tasks"
-  include_tasks: bambooagent_install_starter_ubuntu.yml
-  when: ansible_distribution == 'Ubuntu'
+- name: Install the systemd config
+  ansible.builtin.template:
+    src: "ubuntu/etc/systemd/system/atlassian-bambooagent.service.j2"
+    dest: "/etc/systemd/system/{{ bambooagent_service_name }}.service"
+    owner: root
+    group: root
+    mode: "0644"
 
-- name: "[BAMBOO] OSX installation tasks"
-  include_tasks: bambooagent_install_starter_osx.yml
-  when: ansible_distribution == "MacOSX"
+- name: Install the startup script
+  ansible.builtin.template:
+    src: "ubuntu/bamboo-startup.sh.j2"
+    dest: "{{ bambooagent_install_root }}/bamboo-startup.sh"
+    owner: "{{ bambooagent_user }}"
+    group: "{{ bambooagent_group }}"
+    mode: "0755"
 
-- name: "[BAMBOO] Windows installation tasks"
-  include_tasks: bambooagent_install_starter_windows.yml
-  when: ansible_os_family == "Windows"
+- name: Register and restart service
+  ansible.builtin.assert:
+    that: true
+  changed_when: true
+  notify:
+    - Register service
+    - Restart service
