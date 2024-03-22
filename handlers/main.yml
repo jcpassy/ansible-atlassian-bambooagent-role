@@ -1,35 +1,27 @@
----
-- name: register init.d
-  command: update-rc.d {{ bambooagent_service_name }} enabled
+- name: Register init.d
+  ansible.builtin.command: update-rc.d {{ bambooagent_service_name }} enabled
+  register: output
+  changed_when: output.rc != 0
 
-- name: register bambooagent service
-  service:
+- name: Register bambooagent service
+  ansible.builtin.service:
     name: "{{ bambooagent_service_name }}"
-    enabled: yes
     state: reloaded
+    enabled: true
 
-- name: restart bambooagent osx
-  shell: >-
-    launchctl unload -w
-    /Library/LaunchDaemons/com.atlassian.{{ bambooagent_service_name }}.plist &&
-    launchctl load -w
-    /Library/LaunchDaemons/com.atlassian.{{ bambooagent_service_name }}.plist
-  listen: "restart bambooagent"
-  when: ansible_distribution == "MacOSX"
-
-- name: restart bambooagent linux
-  service:
+- name: Restart bambooagent linux/macOS
+  ansible.builtin.service:
     name: "{{ bambooagent_service_name }}"
     state: restarted
-    enabled: yes
-  listen: "restart bambooagent"
+    enabled: true
+  listen: "Restart bambooagent"
   when:
-    - ansible_distribution == "Ubuntu"
+    - ansible_distribution != "Windows"
 
-- name: restart bambooagent windows
-  win_service:
+- name: Restart bambooagent windows
+  ansible.windows.win_service:
     name: "{{ bambooagent_service_name }}"
     state: restarted
-  listen: "restart bambooagent"
+  listen: "Restart bambooagent"
   when:
     - ansible_os_family == "Windows"

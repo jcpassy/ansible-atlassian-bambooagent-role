@@ -1,11 +1,41 @@
 ---
+# List of tasks
 
-# This file configures the bamboo agent
+- name: Check variables
+  ansible.builtin.import_tasks: check_vars.yml
+  tags:
+    - checks
 
-- include_tasks: check_vars.yml
-- include_tasks: bambooagent_create_user.yml
-# Installs the certificates, if any, on the system
-- include_tasks: bambooagent_install_system_certificate.yml
+- name: Configure user Ubuntu/macOS
+  when: ansible_distribution != "Windows"
+  ansible.builtin.import_tasks: create_user_ubuntu.yml
+  tags:
+    - create_user
+
+- name: Configure user Windows
+  when: ansible_distribution == "Windows"
+  ansible.builtin.import_tasks: create_user_win.yml
+  tags:
+    - create_user
+
+
+- name: Exiting
+  ansible.builtin.assert:
+    that:
+      - false
+
+- name: Install certificate
   when: certificate_files|default()
-- include_tasks: bambooagent_install_starter.yml
-- include_tasks: bambooagent_configure_capabilities.yml
+  ansible.builtin.import_tasks: install_certificate.yml
+  tags:
+    - certificates
+
+- name: Install starter
+  ansible.builtin.import_tasks: install_starter.yml
+  tags:
+    - starter
+
+- name: Configure capabilities
+  ansible.builtin.import_tasks: configure_capabilities.yml
+  tags:
+    - capabilities

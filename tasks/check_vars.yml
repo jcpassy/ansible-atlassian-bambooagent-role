@@ -1,21 +1,20 @@
-#
 # Checking that required variables are set
-#
+# JC: Warning for when condition but I do not know how to capture undefined items otherwise
 
-- name: '[BAMBOO] Checking that required variables are set'
-  fail:
-    msg: "{{ item }} is not defined"
-  when: item is undefined
+- name: 'Checking that required variables are set'
+  when: "{{ item }} is undefined"
+  ansible.builtin.fail:
+    msg: "{{ item }} is undefined"
   loop:
-    - bambooagent_user
-    - bambooagent_group
-    - bamboo_server_url
-    - bambooagent_install_root
-    - bambooagent_service_name
-    - bambooagent_version
     - bambooagent_agent_root
     - bambooagent_capability_file
+    - bambooagent_group
+    - bambooagent_install_root
     - bambooagent_jar_filename
     - bambooagent_jar_filename_full_path
+    - bambooagent_service_name
+    - bambooagent_user
+    - bambooagent_version
+    - bamboo_server_url
   tags:
     - always
