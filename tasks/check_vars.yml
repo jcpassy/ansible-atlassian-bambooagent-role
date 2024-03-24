@@ -1,8 +1,7 @@
 # Checking that required variables are set
-# JC: Warning for when condition but I do not know how to capture undefined items otherwise
 
-- name: 'Checking that required variables are set'
-  when: "{{ item }} is undefined"
+- name: Checking that required variables are set
+  when: vars[item] is undefined
   ansible.builtin.fail:
     msg: "{{ item }} is undefined"
   loop:
