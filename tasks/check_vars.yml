@@ -5,15 +5,15 @@
   ansible.builtin.fail:
     msg: "{{ item }} is undefined"
   loop:
-    - bambooagent_agent_root
-    - bambooagent_capability_file
-    - bambooagent_group
-    - bambooagent_install_root
-    - bambooagent_jar_filename
-    - bambooagent_jar_filename_full_path
-    - bambooagent_service_name
-    - bambooagent_user
-    - bambooagent_version
+    - agent_root
+    - bamboo_jar_file
     - bamboo_server_url
+    - bamboo_version
+    - capability_file
+    - group
+    - install_root
+    - operating_system
+    - service_name
+    - user
   tags:
     - always

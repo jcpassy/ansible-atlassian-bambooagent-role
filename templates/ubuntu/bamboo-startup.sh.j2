@@ -9,6 +9,6 @@ export {{ env_option }}
 # executing the bambooagent
 exec $JAVA_HOME/bin/java \
     {{ bambooagentjava_additional_options | join(" ") }} \
-    -jar {{ bambooagent_jar_filename_full_path }} \
+    -jar {{ install_root }}/{{ jar_filename }} \
     {{ bamboo_server_url }}/agentServer/ \
     {{ bamboo_agent_security_token | ternary('-t ' + bamboo_agent_security_token,'') }}

@@ -1,34 +1,31 @@
 ---
 # Agent
-bambooagent_service_name: bambooagent
-bambooagent_user: bambooagent
-bambooagent_group: bambooagent_grp
-bambooagent_version: 9.2.1
-bambooagent_install_root: "/home/{{ bambooagent_user }}"
-bambooagent_agent_root: "{{ bambooagent_install_root }}/bamboo-agent-home"
+service_name: bambooagent
+user: bambooagent
+group: grp
+install_root: "/home/{{ user }}"
+agent_root: "{{ install_root }}/bamboo-agent-home"
+jar_filename_full_path: "{{ install_root }}/{{ jar_filename }}"
 
 # Location of the capabilities file on the remote
-bambooagent_capability_file: "{{ bambooagent_agent_root }}/bin/bamboo-capabilities.properties"
-
-# Bamboo jar file name
-bambooagent_jar_filename: atlassian-bamboo-agent-installer-{{ bambooagent_version }}.jar
-
-# Location of the Bamboo jar file on the remote
-bambooagent_jar_filename_full_path: "{{ bambooagent_install_root }}/{{ bambooagent_jar_filename }}"
+capability_file: "{{ agent_root }}/bin/bamboo-capabilities.properties"
 
 # Additional options passed to Java
-bambooagentjava_additional_options:
+java_additional_options:
   - "-Djava.awt.headless=true"
-  - "-Dbamboo.home={{ bambooagent_agent_root }}"
+  - "-Dbamboo.home={{ agent_root }}"
 
 # Additional environment variables set before running the bamboo agent (eg. CUDA_VISIBLE_DEVICES)
-bambooagent_additional_environment: []
+additional_environment: []
 
 # Default capability of the agent
-bamboo_capabilities: {}
+capabilities: {}
 
 # Bamboo remote agent security token
-bamboo_agent_security_token: ""
+security_token: ""
 
 # Indicates that fetching from server should verify the certificates
-bamboo_verify_certificates: true
+verify_certificates: true
+
+# Packages to install via apt
+packages_to_install: []

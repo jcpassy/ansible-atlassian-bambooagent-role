@@ -1,28 +1,22 @@
 ---
-- name: Check if the group exists
+- name: Make sure the group exists
   ansible.builtin.group:
-    name: "{{ bambooagent_group }}"
+    name: "{{ group }}"
     state: present
-
-- name: Check if the local user exists
-  ansible.builtin.getent:
-    database: passwd
-    key: "{{ bambooagent_user }}"
-    split: ':'
-    fail_key: false
 
 - name: Creating non-existing user
   ansible.builtin.user:
-    name: "{{ bambooagent_user }}"
+    name: "{{ user }}"
+    group: "{{ group }}"
     comment: "Bamboo agent"
     state: present
     createhome: true
     system: true
-  register: user
+  register: user_output
 
 - name: Fix home permissions
   ansible.builtin.file:
-    path: "{{ user.home }}"
+    path: "{{ user_output.home }}"
     state: directory
-    owner: "{{ bambooagent_user }}"
+    owner: "{{ user }}"
     mode: "0755"

@@ -3,24 +3,24 @@
 
 - name: Create the installation folder
   ansible.builtin.file:
-    path: "{{ bambooagent_install_root }}"
+    path: "{{ install_root }}"
     state: directory
-    owner: "{{ bambooagent_user }}"
-    group: "{{ bambooagent_group }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
     mode: "0755"
 
 - name: Copy bamboo jar into destination from existing file
   ansible.builtin.copy:
-    src: "{{ bamboo_java_jar_file }}"
-    dest: "{{ bambooagent_jar_filename_full_path }}"
-    owner: "{{ bambooagent_user }}"
-    group: "{{ bambooagent_group }}"
+    src: "{{ bamboo_jar_file }}"
+    dest: "{{ install_root }}/{{ jar_filename }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
     mode: "0744"
 
 - name: Install the systemd config
   ansible.builtin.template:
     src: "ubuntu/etc/systemd/system/atlassian-bambooagent.service.j2"
-    dest: "/etc/systemd/system/{{ bambooagent_service_name }}.service"
+    dest: "/etc/systemd/system/{{ service_name }}.service"
     owner: root
     group: root
     mode: "0644"
@@ -28,9 +28,9 @@
 - name: Install the startup script
   ansible.builtin.template:
     src: "ubuntu/bamboo-startup.sh.j2"
-    dest: "{{ bambooagent_install_root }}/bamboo-startup.sh"
-    owner: "{{ bambooagent_user }}"
-    group: "{{ bambooagent_group }}"
+    dest: "{{ install_root }}/bamboo-startup.sh"
+    owner: "{{ user }}"
+    group: "{{ group }}"
     mode: "0755"
 
 - name: Register and restart service

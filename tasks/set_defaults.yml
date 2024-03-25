@@ -6,10 +6,10 @@
 
 - name: Declare default capabilities
   ansible.builtin.set_fact:
-    bamboo_capabilities: "{{ (bamboo_capabilities | default({})) | combine({item.key: item.value}) }}"
+    capabilities: "{{ (capabilities | default({})) | combine({item.key: item.value}) }}"
   loop:
     - key: 'operating_system'
-      value: "{{ bamboo_operating_system_capability }}"
+      value: "{{ operating_system_capability }}"
     - key: agent_name
       value: "{{ ansible_fqdn }}"
     - key: osversion
