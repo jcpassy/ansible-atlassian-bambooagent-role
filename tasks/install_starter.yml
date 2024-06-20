@@ -38,5 +38,4 @@
     that: true
   changed_when: true
   notify:
-    - Register service
     - Restart service
