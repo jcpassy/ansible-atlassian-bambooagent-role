@@ -2,10 +2,9 @@
 # Agent
 service_name: bambooagent
 user: bambooagent
-group: grp
+group: bambooagent_grp
 install_root: "/home/{{ user }}"
 agent_root: "{{ install_root }}/bamboo-agent-home"
-jar_filename_full_path: "{{ install_root }}/{{ jar_filename }}"
 
 # Location of the capabilities file on the remote
 capability_file: "{{ agent_root }}/bin/bamboo-capabilities.properties"
@@ -14,6 +13,12 @@ capability_file: "{{ agent_root }}/bin/bamboo-capabilities.properties"
 java_additional_options:
   - "-Djava.awt.headless=true"
   - "-Dbamboo.home={{ agent_root }}"
+
+# Python3 versions to install
+python3_versions:
+  - 3
+  - 3.8
+
 
 # Additional environment variables set before running the bamboo agent (eg. CUDA_VISIBLE_DEVICES)
 additional_environment: []

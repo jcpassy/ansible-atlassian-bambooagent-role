@@ -9,7 +9,7 @@
     capabilities: "{{ (capabilities | default({})) | combine({item.key: item.value}) }}"
   loop:
     - key: 'operating_system'
-      value: "{{ operating_system_capability }}"
+      value: "{{ operating_system }}"
     - key: agent_name
       value: "{{ ansible_fqdn }}"
     - key: osversion

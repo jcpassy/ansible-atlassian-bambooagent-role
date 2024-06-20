@@ -5,36 +5,36 @@
 
 - name: Create root directory
   ansible.builtin.file:
-    path: "{{ bambooagent_capability_file | dirname }}"
+    path: "{{ capability_file | dirname }}"
     state: directory
     recurse: true
-    owner: "{{ bambooagent_user }}"
-    group: "{{ bambooagent_group }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
     mode: "0755"
 
 - name: Create capability
   ansible.builtin.file:
-    path: "{{ bambooagent_capability_file }}"
+    path: "{{ capability_file }}"
     state: touch
     mode: "0444"
 
 - name: Flush capabilities into file (new created, existing updated)
   ansible.builtin.lineinfile:
-    dest: "{{ bambooagent_capability_file }}"
+    dest: "{{ capability_file }}"
     state: present
     regexp: "^{{ item.key.strip() | replace('\\n', '') | replace('\\r', '') }}="
     line: "{{ item.key.strip() | replace('\\n', '') | replace('\\r', '') }}={{ item.value.strip() | replace('\\n', '') | replace('\\r', '') }}"
-  loop: "{{ bamboo_capabilities | dict2items }}"
+  loop: "{{ capabilities | dict2items }}"
 
 - name: Remove empty lines from the capability file
   ansible.builtin.lineinfile:
-    dest: "{{ bambooagent_capability_file }}"
+    dest: "{{ capability_file }}"
     state: absent
     regexp: "^\\s*$"
 
 - name: Remove capabilities from agents
   ansible.builtin.lineinfile:
-    dest: "{{ bambooagent_capability_file }}"
+    dest: "{{ capability_file }}"
     state: absent
     regexp: "^{{ item.strip() | replace('\\n', '') | replace('\\r', '') }}="
   loop: "{{ bamboo_capabilities_to_remove | default([]) }}"
@@ -43,14 +43,14 @@
 
 - name: '[BAMBOO] Check if the agent file exists'
   win_stat:
-    path: "{{ bambooagent_capability_file }}"
+    path: "{{ capability_file }}"
   when:
     - ansible_os_family == "Windows"
   register: win_stat_result
 
 - name: Create root directory if file does not exist
   win_file:
-    path: "{{ bambooagent_capability_file | dirname }}"
+    path: "{{ capability_file | dirname }}"
     state: directory
     recurse: yes
     owner: "{{ bambooagent_user }}"
@@ -64,7 +64,7 @@
 # what a nightmare to escape \ with YAML...
 - name: '[BAMBOO] Flush the capabilities into the agents file'
   win_lineinfile:
-    dest: "{{ bambooagent_capability_file }}"
+    dest: "{{ capability_file }}"
     state: present
     create: yes
     regexp: "^{{ item.key.strip() | replace('\\n', '') | replace('\\r', '') }}="
@@ -83,7 +83,7 @@
 
 - name: '[BAMBOO] Remove empty lines from the capability file'
   win_lineinfile:
-    dest: "{{ bambooagent_capability_file }}"
+    dest: "{{ capability_file }}"
     state: absent
     regexp: "^\\s*$"
   tags:
@@ -93,7 +93,7 @@
 
 - name: '[BAMBOO] Remove capabilities from agents'
   win_lineinfile:
-    dest: "{{ bambooagent_capability_file }}"
+    dest: "{{ capability_file }}"
     state: absent
     regexp: "^{{ item.strip() | replace('\\n', '') | replace('\\r', '') }}="
   loop: "{{ bamboo_capabilities_to_remove | default([]) }}"

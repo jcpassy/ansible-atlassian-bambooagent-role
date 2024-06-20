@@ -17,3 +17,7 @@
     - user
   tags:
     - always
+
+- name: Set some intermediate variables (DRY)
+  ansible.builtin.set_fact:
+    jar_file_full_path: "{{ install_root }}/{{ bamboo_jar_file | basename }}"

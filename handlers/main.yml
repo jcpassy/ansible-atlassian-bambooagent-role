@@ -1,17 +1,17 @@
 - name: Register init.d
-  ansible.builtin.command: update-rc.d {{ bambooagent_service_name }} enabled
+  ansible.builtin.command: update-rc.d {{ service_name }} enabled
   register: output
   changed_when: output.rc != 0
 
 - name: Register service
   ansible.builtin.service:
-    name: "{{ bambooagent_service_name }}"
+    name: "{{ service_name }}"
     state: reloaded
     enabled: true
 
 - name: Restart service
   ansible.builtin.service:
-    name: "{{ bambooagent_service_name }}"
+    name: "{{ service_name }}"
     state: restarted
     enabled: true
 

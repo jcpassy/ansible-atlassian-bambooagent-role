@@ -34,10 +34,10 @@
   tags:
     - starter
 
-- name: Install python3
-  ansible.builtin.import_tasks: install_python3.yml
-  tags:
-    - python
+# - name: Install python3
+#   ansible.builtin.import_tasks: install_python3.yml
+#   tags:
+#     - python
 
 # - name: Exiting
 #   ansible.builtin.assert:

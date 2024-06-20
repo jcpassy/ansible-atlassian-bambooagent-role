@@ -1,20 +1,22 @@
-#
-# linux / installation with regular packages
-#
+---
+# Instlal python3 versions
 
-- block:
-  - name: '[PYTHON3] install python3 standard packages'
-    apt:
-      name: "{{ packages }}"
-      update_cache: yes
-      state: present
-      cache_valid_time: 3600
-    vars:
-      packages:
-        - "{{ 'python%s-venv' % python3_version.major }}"
-        - "{{ 'python%s.%s' % (python3_version.major, python3_version.minor) }}"
-        - "{{ 'python%s.%s-venv' % (python3_version.major, python3_version.minor) }}"
-        - "{{ 'libpython%s.%s-dev' % (python3_version.major, python3_version.minor) }}"
+- name: Install python3 standard packages
+  ansible.builtin.set_fact:
+    python_version
+
+- name: Install python3 standard packages
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: present
+    cache_valid_time: 3600
+  vars:
+    packages:
+      - "{{ 'python%s-venv' % python3_version.major }}"
+      - "{{ 'python%s.%s' % (python3_version.major, python3_version.minor) }}"
+      - "{{ 'python%s.%s-venv' % (python3_version.major, python3_version.minor) }}"
+      - "{{ 'libpython%s.%s-dev' % (python3_version.major, python3_version.minor) }}"
 
   - name: '[PYTHON3] locating python3 binaries'
     shell: "{{ item.key }} -c \"{{ item.value }}\""
