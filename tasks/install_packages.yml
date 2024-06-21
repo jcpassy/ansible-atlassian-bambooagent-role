@@ -35,6 +35,11 @@
 - name: Read agent capability file
   ansible.builtin.include_tasks: read_capability.yml
 
+- name: Declare new custom capabilities
+  ansible.builtin.set_fact:
+    capabilities: "{{ (capabilities | default({})) | combine({item: ''}) }}"
+  loop: "{{ custom_capabilities_to_declare }}"
+
 - name: Check if binary exists in PATH
   ansible.builtin.command:
     cmd: which {{ item }}
@@ -43,7 +48,7 @@
   ignore_errors: true
   changed_when: true
 
-- name: Declare new capabilities
+- name: Declare new executables capabilities
   ansible.builtin.set_fact:
     capabilities: "{{ (capabilities | default({})) | combine({'system.builder.command.' + item.item: item.stdout_lines[0]}) }}"
   loop: "{{ which_out.results }}"
