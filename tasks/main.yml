@@ -28,6 +28,12 @@
   tags:
     - capability
 
+- name: Install packages on Ubuntu
+  when: ansible_distribution == "Ubuntu"
+  ansible.builtin.import_tasks: install_packages.yml
+  tags:
+    - packages
+
 - name: Install starter Ubuntu/macOS
   when: ansible_distribution != "Windows"
   ansible.builtin.import_tasks: install_starter.yml
