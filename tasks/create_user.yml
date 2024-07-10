@@ -11,10 +11,11 @@
     comment: "Bamboo agent"
     state: present
     createhome: true
-    system: true
+  ignore_errors: true # might fail if LDAP
   register: user_output
 
 - name: Fix home permissions
+  when: user_output.failed is false
   ansible.builtin.file:
     path: "{{ user_output.home }}"
     state: directory
