@@ -1,0 +1,23 @@
+# Updates the capability file if it finds a GPU (no configuration)
+
+- name: Check if NVIDIA executable runs
+  ansible.builtin.command:
+    cmd: nvidia-smi
+  register: output
+  ignore_errors: true
+  changed_when: true
+
+- name: Update capability file
+  when: output.rc == 0
+  block:
+    - name: Read agent capability file
+      ansible.builtin.include_tasks: read_capability.yml
+
+    - name: Add GPU custom capabilities
+      ansible.builtin.set_fact:
+        capabilities: "{{ (capabilities | default({})) | combine({item: ''}) }}"
+      loop:
+        - gpu
+
+    - name: Update agent capability file
+      ansible.builtin.include_tasks: write_capability.yml
